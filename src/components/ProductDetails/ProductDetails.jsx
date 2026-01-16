@@ -1,9 +1,10 @@
 import React, { use, useRef } from "react";
 import { useLoaderData } from "react-router";
 import { AuthContext } from "../../contexts/AuthContext";
+import Swal from "sweetalert2";
 
 const ProductDetails = () => {
-  const { _id } = useLoaderData();
+  const { _id: productId } = useLoaderData();
   const bidModalRef = useRef(null);
   const { user } = use(AuthContext);
 
@@ -16,16 +17,42 @@ const ProductDetails = () => {
     const name = e.target.name.value;
     const email = e.target.email.value;
     const bid = e.target.bid.value;
-    console.log(_id, name, email, bid);
+    console.log(productId, name, email, bid);
+
+    const newBid = {
+      product: productId,
+      buyer_name: name,
+      buyer_email: email,
+      bid_price: bid,
+      status: "pending",
+    };
+    fetch("http://localhost:5000/bids", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newBid),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.insertedId) {
+          bidModalRef.current.close();
+          Swal.fire({
+            position: "top-middle",
+            icon: "success",
+            title: "Your bid has been placed",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      });
   };
 
   return (
     <div>
       {/* product info */}
       <div>
-        <div>
-
-        </div>
+        <div></div>
         {/* bid modal */}
         <div>
           <button onClick={handleBidModalOpen} className="btn btn-primary">
@@ -75,7 +102,7 @@ const ProductDetails = () => {
               <div className="modal-action">
                 <form method="dialog">
                   {/* if there is a button in form, it will close the modal */}
-                  <button className="btn">Close</button>
+                  <button className="btn">Cancel</button>
                 </form>
               </div>
             </div>
