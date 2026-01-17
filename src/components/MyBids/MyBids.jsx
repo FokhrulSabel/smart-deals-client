@@ -8,7 +8,12 @@ const MyBids = () => {
 
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:5000/bids?email=${user.email}`)
+      fetch(`http://localhost:5000/bids?email=${user.email}`,{
+        headers: {
+            authorization: `bearer ${user?.accessToken}`
+            
+        }
+      })
         .then((res) => res.json())
         .then((data) => {
           console.log("bids of user", data);
@@ -80,13 +85,13 @@ const MyBids = () => {
                       </div>
                     </div>
                     <div>
-                      <div className="font-bold">Yancy Tear</div>
-                      <div className="text-sm opacity-50">Brazil</div>
+                      <div className="font-bold">{bid.buyer_name}</div>
+                      <div className="text-sm opacity-50">Bangladesh</div>
                     </div>
                   </div>
                 </td>
                 <td>
-                  Wyman-Ledner
+                  {bid.seller_name}
                   <br />
                   <span className="badge badge-ghost badge-sm">
                     Community Outreach Specialist

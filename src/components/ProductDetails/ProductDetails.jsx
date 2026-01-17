@@ -1,13 +1,17 @@
 import React, { use, useEffect, useRef, useState } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useParams } from "react-router";
 import { AuthContext } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
 
 const ProductDetails = () => {
-  const { _id: productId } = useLoaderData();
+  // const { id: productId } = useLoaderData();
+  const { id: productId } = useParams();
+  const productData = useLoaderData();
+  // const productId = productData._id;
   const [bids, setBids] = useState([]);
   const bidModalRef = useRef(null);
   const { user } = use(AuthContext);
+  console.log("product id in details page", productId, productData);
 
   useEffect(() => {
     fetch(`http://localhost:5000/products/bids/${productId}`)
