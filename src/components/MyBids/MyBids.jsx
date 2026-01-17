@@ -1,5 +1,6 @@
 import React, { use, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import Swal from "sweetalert2";
 
 const MyBids = () => {
   const { user } = use(AuthContext);
@@ -15,6 +16,39 @@ const MyBids = () => {
         });
     }
   }, [user?.email]);
+
+  const handleDeleteBid = (_id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:5000/bids/${_id}`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.deletedCount) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your bid has been deleted.",
+                icon: "success",
+              });
+
+              // remove the deleted bid from the state
+              const remainingBids = bids.filter((bid) => bid._id !== _id);
+              setBids(remainingBids);
+            }
+          });
+      }
+    });
+  };
+
   return (
     <div>
       <h3>My Bids: {bids.length}</h3>
@@ -23,17 +57,18 @@ const MyBids = () => {
           {/* head */}
           <thead>
             <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>Favorite Color</th>
-              <th></th>
+              <th>#</th>
+              <th>Product</th>
+              <th>Seller</th>
+              <th>Bid Price</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {bids.map((bid, index) => (
               <tr key={bid._id}>
-                <th>{index + 1}</th>
+                <td>{index + 1}</td>
                 <td>
                   <div className="flex items-center gap-3">
                     <div className="avatar">
@@ -57,9 +92,21 @@ const MyBids = () => {
                     Community Outreach Specialist
                   </span>
                 </td>
-                <td>Indigo</td>
+                <td>{bid.bid_price}</td>
+                <td>
+                  {bid.status === "pending" ? (
+                    <div className="badge badge-warning">{bid.status}</div>
+                  ) : (
+                    <div className="badge badge-success">{bid.status}</div>
+                  )}
+                </td>
                 <th>
-                  <button className="btn btn-ghost btn-xs">details</button>
+                  <button
+                    onClick={() => handleDeleteBid(bid._id)}
+                    className="btn btn-outline btn-xs"
+                  >
+                    Remove Bid
+                  </button>
                 </th>
               </tr>
             ))}
