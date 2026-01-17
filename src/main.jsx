@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       },
       {
         path: "register",
-        element: <Register></Register>,
+        Component: Register,
       },
       {
         path: "myProducts",
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
         path: "productDetails/:id",
         loader: ({ params }) =>
           fetch(`http://localhost:5000/products/${params.id}`),
-        Component: ProductDetails
+        Component: ProductDetails,
       },
     ],
   },
