@@ -10,7 +10,7 @@ const MyBids = () => {
     if (user?.email) {
       fetch(`http://localhost:5000/bids?email=${user.email}`,{
         headers: {
-            authorization: `bearer ${user?.accessToken}`
+            authorization: `Bearer ${user?.accessToken}`
             
         }
       })
@@ -20,7 +20,7 @@ const MyBids = () => {
           setBids(data);
         });
     }
-  }, [user?.email]);
+  }, [user]);
 
   const handleDeleteBid = (_id) => {
     Swal.fire({

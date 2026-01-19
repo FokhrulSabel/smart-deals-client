@@ -40,10 +40,27 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // Observe Auth State Change
+  
+ // Observe Auth State Change
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      console.log("current user", currentUser);
+      if (currentUser) {
+        const loggedUser = { email: currentUser.email };
+
+        fetch("http://localhost:5000/getToken", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(loggedUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("after getting token", data);
+          });
+      }
       setLoading(false);
     });
     return () => {
