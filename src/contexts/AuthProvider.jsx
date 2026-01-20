@@ -40,8 +40,7 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  
- // Observe Auth State Change
+  // Observe Auth State Change
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -59,8 +58,11 @@ const AuthProvider = ({ children }) => {
           .then((res) => res.json())
           .then((data) => {
             console.log("after getting token", data.token);
+            // Save token to local storage
             localStorage.setItem("access-token", data.token);
           });
+      } else {
+        localStorage.removeItem("access-token");
       }
       setLoading(false);
     });
