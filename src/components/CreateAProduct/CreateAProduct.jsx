@@ -1,8 +1,13 @@
 import axios from "axios";
 import React from "react";
 import Swal from "sweetalert2";
+import useAuth from "../../hooks/useAuth";
+import useAxios from "../../hooks/useAxios";
 
 const CreateAProduct = () => {
+  const { user } = useAuth();
+  const axiosInstance = useAxios();
+
   const handleCreateAProduct = (e) => {
     e.preventDefault();
     const title = e.target.title.value;
@@ -13,24 +18,30 @@ const CreateAProduct = () => {
 
     const newProduct = { title, image, minPrice, maxPrice };
 
-    axios
-      .post("http://localhost:5000/products", newProduct)
-      .then((data) => {
-        console.log(data.data);
+    // Post new product to server using axios
+    // axios
+    //   .post("http://localhost:5000/products", newProduct)
+    //   .then((data) => {
+    //     console.log(data.data);
 
-        if (data.data.insertedId) {
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Your product has been created.",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error creating product:", error);
-      });
+    //     if (data.data.insertedId) {
+    //       Swal.fire({
+    //         position: "top-end",
+    //         icon: "success",
+    //         title: "Your product has been created.",
+    //         showConfirmButton: false,
+    //         timer: 1500,
+    //       });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error creating product:", error);
+    //   });
+
+    // Post new product to server using axios instance
+    axiosInstance.post("/products", newProduct).then((data) => {
+      console.log("after axios post", data.data);
+    });
   };
   return (
     <div className="lg:w-1/2 mx-auto">
