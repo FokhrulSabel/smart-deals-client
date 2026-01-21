@@ -2,6 +2,7 @@ import React, { use, useEffect, useRef, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
 import { AuthContext } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const ProductDetails = () => {
   // const { id: productId } = useLoaderData();
@@ -13,18 +14,37 @@ const ProductDetails = () => {
   const { user } = use(AuthContext);
   console.log("product id in details page", productId, productData);
 
+  // fetch bids for this product from server using productId using axios
   useEffect(() => {
-    fetch(`http://localhost:5000/products/bids/${productId}`,{
-      headers: {
-        authorization: `Bearer ${user?.accessToken}`
-      }
-    })
-      .then((res) => res.json())
+    axios
+      .get(`http://localhost:5000/products/bids/${productId}`,
+        {
+          headers: {
+            authorization: `Bearer ${user?.accessToken}`,
+          },
+        }
+      )
+
       .then((data) => {
-        console.log("bids for this product", data);
-        setBids(data);
+        console.log("after axios get", data);
+
+        setBids(data.data);
       });
   }, [productId, user]);
+
+  // fetch bids for this product from server using productId using useEffect hook
+  // useEffect(() => {
+  //   fetch(`http://localhost:5000/products/bids/${productId}`, {
+  //     headers: {
+  //       authorization: `Bearer ${user?.accessToken}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log("bids for this product", data);
+  //       setBids(data);
+  //     });
+  // }, [productId, user]); 
 
   const handleBidModalOpen = () => {
     bidModalRef.current.showModal();
@@ -155,7 +175,7 @@ const ProductDetails = () => {
             <tbody>
               {/* row 1 */}
               {bids.map((bid, index) => (
-                <tr>
+                <tr key={bid._id}>
                   <th>{index + 1} </th>
                   <td>
                     <div className="flex items-center gap-3">

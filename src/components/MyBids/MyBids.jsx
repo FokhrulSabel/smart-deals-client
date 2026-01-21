@@ -6,28 +6,13 @@ const MyBids = () => {
   const { user } = use(AuthContext);
   const [bids, setBids] = useState([]);
 
-  useEffect(() => {
-    if (user?.email) {
-      fetch(`http://localhost:5000/bids?email=${user.email}`,{
-        headers: {
-            authorization: `Bearer ${localStorage.getItem("access-token")}`
-            
-        }
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("bids of user", data);
-          setBids(data);
-        });
-    }
-  }, [user]);
-
+  // fetch bids of the logged in user from server using useEffect hook with access token from local storage
   // useEffect(() => {
   //   if (user?.email) {
   //     fetch(`http://localhost:5000/bids?email=${user.email}`,{
   //       headers: {
-  //           authorization: `Bearer ${user?.accessToken}`
-            
+  //           authorization: `Bearer ${localStorage.getItem("access-token")}`
+
   //       }
   //     })
   //       .then((res) => res.json())
@@ -37,6 +22,22 @@ const MyBids = () => {
   //       });
   //   }
   // }, [user]);
+
+  // fetch bids of the logged in user from server using useEffect hook with access token from user context
+  useEffect(() => {
+    if (user?.email) {
+      fetch(`http://localhost:5000/bids?email=${user.email}`, {
+        headers: {
+          authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("bids of user", data);
+          setBids(data);
+        });
+    }
+  }, [user]);
 
   const handleDeleteBid = (_id) => {
     Swal.fire({
