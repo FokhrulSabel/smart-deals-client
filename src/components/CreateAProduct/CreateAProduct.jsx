@@ -1,9 +1,37 @@
+import axios from "axios";
 import React from "react";
+import Swal from "sweetalert2";
 
 const CreateAProduct = () => {
-    const handleCreateAProduct = (e) => {
+  const handleCreateAProduct = (e) => {
     e.preventDefault();
-    };
+    const title = e.target.title.value;
+    const image = e.target.image.value;
+    const minPrice = e.target.minPrice.value;
+    const maxPrice = e.target.maxPrice.value;
+    console.log(title, image, minPrice, maxPrice);
+
+    const newProduct = { title, image, minPrice, maxPrice };
+
+    axios
+      .post("http://localhost:5000/products", newProduct)
+      .then((data) => {
+        console.log(data.data);
+
+        if (data.data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Your product has been created.",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating product:", error);
+      });
+  };
   return (
     <div className="lg:w-1/2 mx-auto">
       <form onSubmit={handleCreateAProduct}>
