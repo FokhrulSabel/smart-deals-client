@@ -1,12 +1,13 @@
-import axios from "axios";
 import React from "react";
 import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
-import useAxios from "../../hooks/useAxios";
+// import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const CreateAProduct = () => {
   const { user } = useAuth();
-  const axiosInstance = useAxios();
+  //   const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const handleCreateAProduct = (e) => {
     e.preventDefault();
@@ -16,7 +17,18 @@ const CreateAProduct = () => {
     const maxPrice = e.target.maxPrice.value;
     console.log(title, image, minPrice, maxPrice);
 
-    const newProduct = { title, image, minPrice, maxPrice };
+    const newProduct = {
+      title,
+      image,
+      minPrice,
+      maxPrice,
+      email: user?.email,
+      seller_name: user?.displayName,
+    };
+
+    axiosSecure.post("/products", newProduct).then((data) => {
+      console.log("after secure call", data.data);
+    });
 
     // Post new product to server using axios
     // axios
@@ -39,9 +51,9 @@ const CreateAProduct = () => {
     //   });
 
     // Post new product to server using axios instance
-    axiosInstance.post("/products", newProduct).then((data) => {
-      console.log("after axios post", data.data);
-    });
+    // axiosInstance.post("/products", newProduct).then((data) => {
+    //   console.log("after axios post", data.data);
+    // });
   };
   return (
     <div className="lg:w-1/2 mx-auto">
