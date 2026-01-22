@@ -1,10 +1,18 @@
 import React, { use, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const MyBids = () => {
   const { user } = use(AuthContext);
   const [bids, setBids] = useState([]);
+  const axiosSecure = useAxiosSecure();
+
+  useEffect(() => {
+    axiosSecure.get(`/bids?email=${user.email}`).then((data) => {
+      setBids(data.data);
+    });
+  }, [user, axiosSecure]);
 
   // fetch bids of the logged in user from server using useEffect hook with access token from local storage
   // useEffect(() => {
@@ -24,20 +32,20 @@ const MyBids = () => {
   // }, [user]);
 
   // fetch bids of the logged in user from server using useEffect hook with access token from user context
-  useEffect(() => {
-    if (user?.email) {
-      fetch(`http://localhost:5000/bids?email=${user.email}`, {
-        headers: {
-          authorization: `Bearer ${user?.accessToken}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("bids of user", data);
-          setBids(data);
-        });
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user?.email) {
+  //     fetch(`http://localhost:5000/bids?email=${user.email}`, {
+  //       headers: {
+  //         authorization: `Bearer ${user?.accessToken}`,
+  //       },
+  //     })
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         console.log("bids of user", data);
+  //         setBids(data);
+  //       });
+  //   }
+  // }, [user]);
 
   const handleDeleteBid = (_id) => {
     Swal.fire({
